@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "cpu_support.h"
 #include "rade_core.h"
 #include "rade_enc.h"
 #include "rade_dec.h"

@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "cpu_support.h"
 #include "rade_core.h"
 #include "rade_dec.h"
 #include "rade_dec_data.h"
