@@ -26,7 +26,7 @@
 
 #define DEC_GLU5_OUT_SIZE 96
 
-#define DEC_OUTPUT_OUT_SIZE 84
+#define DEC_OUTPUT_OUT_SIZE 80
 
 #define DEC_GRU1_OUT_SIZE 96
 
@@ -113,6 +113,6 @@ struct RADEDec {
     LinearLayer dec_conv5;
 };
 
-int init_radedec(RADEDec *model, const WeightArray *arrays, int output_dim);
+int init_radedec(RADEDec *model, const WeightArray *arrays);
 
 #endif /* RADE_DEC_DATA_H */

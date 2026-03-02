@@ -58,8 +58,7 @@ int rade_tx_init(rade_tx_state *tx, const RADEEnc *enc_model, int bottleneck, in
         memcpy(&tx->enc_model, enc_model, sizeof(RADEEnc));
     } else {
         /* Use built-in weights */
-        int input_dim = tx->num_features * RADE_FRAMES_PER_STEP;
-        if (init_radeenc(&tx->enc_model, radeenc_arrays, input_dim) != 0) {
+        if (init_radeenc(&tx->enc_model, radeenc_arrays) != 0) {
             return -1;
         }
     }

@@ -82,8 +82,8 @@ struct rade *rade_open(char model_file[], int flags) {
     memset(r, 0, sizeof(struct rade));
 
     r->flags = flags;
-    r->auxdata = 1;
-    r->bottleneck = 3;
+    r->auxdata = 0;
+    r->bottleneck = 1;
 
     /* Note: model_file is ignored in this implementation
        Weights are compiled in via rade_enc_data.c and rade_dec_data.c */

@@ -65,8 +65,7 @@ int rade_rx_init(rade_rx_state *rx, const RADEDec *dec_model, int bottleneck, in
         memcpy(&rx->dec_model, dec_model, sizeof(RADEDec));
     } else {
         /* Use built-in weights */
-        int output_dim = rx->num_features * RADE_FRAMES_PER_STEP;
-        if (init_radedec(&rx->dec_model, radedec_arrays, output_dim) != 0) {
+        if (init_radedec(&rx->dec_model, radedec_arrays) != 0) {
             return -1;
         }
     }

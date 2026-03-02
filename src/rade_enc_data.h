@@ -98,6 +98,6 @@ struct RADEEnc {
     LinearLayer enc_conv5;
 };
 
-int init_radeenc(RADEEnc *model, const WeightArray *arrays, int input_dim);
+int init_radeenc(RADEEnc *model, const WeightArray *arrays);
 
 #endif /* RADE_ENC_DATA_H */

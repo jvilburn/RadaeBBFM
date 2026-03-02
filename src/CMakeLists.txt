@@ -51,3 +51,6 @@ target_link_libraries(rade_demod rade opus m)
 # WAV modulator: WAV in → features → RADE encode → OFDM mod → WAV out
 add_executable(rade_modulate rade_modulate.c)
 target_link_libraries(rade_modulate rade opus m)
+
+add_executable(bbfm_loopback bbfm_loopback.c)
+target_link_libraries(bbfm_loopback rade opus m)
