@@ -54,3 +54,16 @@ target_link_libraries(rade_modulate rade opus m)
 
 add_executable(bbfm_loopback bbfm_loopback.c)
 target_link_libraries(bbfm_loopback rade opus m)
+
+add_executable(bbfm_enc bbfm_enc.c)
+target_link_libraries(bbfm_enc rade opus m)
+
+add_executable(bbfm_dec bbfm_dec.c)
+target_link_libraries(bbfm_dec rade opus m)
+
+# Single-carrier BBFM modem
+add_executable(sc_tx sc_tx.c sc_modem.c)
+target_link_libraries(sc_tx m)
+
+add_executable(sc_rx sc_rx.c sc_modem.c)
+target_link_libraries(sc_rx m)
