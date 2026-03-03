@@ -64,6 +64,39 @@ sox -t .s16 -r 16000 -c 1 - decoded.wav
 play decoded.wav
 ```
 
+## BBFM Tools
+
+These tools use BBFM (BroadBand FM) neural network weights and a single-carrier modem designed for FM radio channels. The encoder/decoder and modem are split into separate command-line tools that can be piped together.
+
+### BBFM Loopback Test (encoder/decoder only, no modem)
+```
+cat voice_16k.raw | ./src/lpcnet_demo -features - - | \
+  ./src/bbfm_loopback | \
+  ./src/lpcnet_demo -fargan-synthesis - - | \
+  sox -t .s16 -r 16000 -c 1 - loopback.wav
+```
+
+### BBFM Encode + SC Transmit: WAV Speech → Audio
+```
+cat voice_16k.raw | ./src/lpcnet_demo -features - - | \
+  ./src/bbfm_enc | ./src/sc_tx > audio.raw
+```
+
+### BBFM SC Receive + Decode: Audio → WAV Speech
+```
+cat audio.raw | ./src/sc_rx | ./src/bbfm_dec | \
+  ./src/lpcnet_demo -fargan-synthesis - - | \
+  sox -t .s16 -r 16000 -c 1 - decoded.wav
+```
+
+### SC Modem Options
+
+Both `sc_tx` and `sc_rx` accept:
+- `--preemph` - Apply pre-emphasis/de-emphasis filtering (75us time constant) to compensate for FM radio frequency response
+- `--fcentre Hz` - Set centre frequency (default 1500 Hz)
+
+The SC modem runs at 2400 sym/s, 9600 Hz sample rate with BPSK-like symbols and RRC pulse shaping.
+
 ## Files
 | File                                          | Purpose                                             |
 | --------------------------------------------- | --------------------------------------------------- |
@@ -75,6 +108,12 @@ play decoded.wav
 | `src/rade_rx.h/c`                             | Receiver with sync state machine                    |
 | `src/rade_api_nopy.c`                         | Python-free API implementation                      |
 | `src/radae_tx_nopy.c` / `src/radae_rx_nopy.c` | Standalone executables                              |
+| `src/sc_modem.h/c`                            | Single-carrier BBFM modem (2400 sym/s BPSK, RRC)   |
+| `src/sc_tx.c`                                 | SC modem transmitter CLI tool                       |
+| `src/sc_rx.c`                                 | SC modem receiver CLI tool                          |
+| `src/bbfm_enc.c`                              | BBFM neural encoder (features → latents)            |
+| `src/bbfm_dec.c`                              | BBFM neural decoder (latents → features)            |
+| `src/bbfm_loopback.c`                         | BBFM encoder/decoder loopback test                  |
 
 ```
 radae_nopy/
@@ -97,8 +136,14 @@ radae_nopy/
     ├── rade_acq.h/c           # Acquisition
     ├── rade_enc.h/c           # Neural encoder
     ├── rade_dec.h/c           # Neural decoder
-    ├── rade_enc_data.c        # Encoder weights
-    ├── rade_dec_data.c        # Decoder weights
+    ├── rade_enc_data.c        # Encoder weights (BBFM)
+    ├── rade_dec_data.c        # Decoder weights (BBFM)
+    ├── sc_modem.h/c           # Single-carrier BBFM modem
+    ├── sc_tx.c                # SC modem TX tool
+    ├── sc_rx.c                # SC modem RX tool
+    ├── bbfm_enc.c             # BBFM encoder tool
+    ├── bbfm_dec.c             # BBFM decoder tool
+    ├── bbfm_loopback.c        # BBFM enc/dec loopback test
     └── opus-nnet.h.diff       # Opus patch
 ```
 
