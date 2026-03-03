@@ -131,8 +131,8 @@ static const float sc_sync_word[SC_NSYNC] = {
 #define SC_P_SCALE 4.0f
 
 /* LO angular frequency step: exp(j * 2*pi*fcentre/Fs) */
-static sc_comp sc_lo_omega(void) {
-    return sc_cexp(2.0f * (float)M_PI * SC_FCENTRE / SC_FS);
+static sc_comp sc_lo_omega(float fcentre) {
+    return sc_cexp(2.0f * (float)M_PI * fcentre / SC_FS);
 }
 
 /* RX filter output buffer length: (Nframe+2)*M for timing margin */
@@ -148,13 +148,19 @@ static sc_comp sc_lo_omega(void) {
 struct sc_modem_tx {
     sc_comp filt_mem[SC_NTAP];      /* FIR filter memory */
     sc_comp lo_phase;               /* LO phase (rectangular) */
+    float fcentre;                  /* Centre frequency (Hz) */
 };
 
-sc_modem_tx *sc_tx_create(void) {
+sc_modem_tx *sc_tx_create_fcentre(float fcentre) {
     sc_modem_tx *tx = calloc(1, sizeof(sc_modem_tx));
     if (!tx) return NULL;
     tx->lo_phase = sc_cmplx(1.0f, 0.0f);
+    tx->fcentre = fcentre;
     return tx;
+}
+
+sc_modem_tx *sc_tx_create(void) {
+    return sc_tx_create_fcentre((float)SC_FCENTRE);
 }
 
 void sc_tx_destroy(sc_modem_tx *tx) {
@@ -163,7 +169,7 @@ void sc_tx_destroy(sc_modem_tx *tx) {
 
 int sc_tx_process(sc_modem_tx *tx, int16_t out[], const float symbols_in[]) {
     int i, j;
-    sc_comp lo_step = sc_lo_omega();
+    sc_comp lo_step = sc_lo_omega(tx->fcentre);
 
     /* Build filter input: [filt_mem | symbol-inserted zeros] */
     int filt_in_len = SC_NTAP + SC_NFRAME * SC_M;
@@ -234,6 +240,7 @@ struct sc_modem_rx {
 
     /* LO */
     sc_comp lo_phase;
+    float fcentre;              /* Centre frequency (Hz) */
 
     /* Timing */
     int sample_point;
@@ -256,15 +263,20 @@ struct sc_modem_rx {
     float g;            /* Amplitude gain */
 };
 
-sc_modem_rx *sc_rx_create(void) {
+sc_modem_rx *sc_rx_create_fcentre(float fcentre) {
     sc_modem_rx *rx = calloc(1, sizeof(sc_modem_rx));
     if (!rx) return NULL;
     rx->lo_phase = sc_cmplx(1.0f, 0.0f);
+    rx->fcentre = fcentre;
     rx->sample_point = SC_SAMPLE_POINT;
     rx->nin = SC_NSAMPLES;
     rx->state = SC_STATE_SEARCH;
     rx->g = 1.0f;
     return rx;
+}
+
+sc_modem_rx *sc_rx_create(void) {
+    return sc_rx_create_fcentre((float)SC_FCENTRE);
 }
 
 void sc_rx_destroy(sc_modem_rx *rx) {
@@ -376,7 +388,7 @@ static void est_phase_and_correct(sc_modem_rx *rx, sc_comp rx_symbs[], int nsymb
 int sc_rx_process(sc_modem_rx *rx, float symbols_out[], const int16_t samples_in[]) {
     int i, j, s;
     int nin = rx->nin;
-    sc_comp lo_step_conj = sc_cconj(sc_lo_omega());
+    sc_comp lo_step_conj = sc_cconj(sc_lo_omega(rx->fcentre));
 
     /* Convert int16 to complex and frequency shift to baseband */
     sc_comp rx_bb[SC_NIN_MAX];

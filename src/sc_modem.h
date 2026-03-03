@@ -85,6 +85,9 @@ typedef struct sc_modem_rx sc_modem_rx;
 /* Create TX modem instance. Returns NULL on allocation failure. */
 sc_modem_tx *sc_tx_create(void);
 
+/* Create TX modem with custom centre frequency (Hz). */
+sc_modem_tx *sc_tx_create_fcentre(float fcentre);
+
 /* Destroy TX modem instance. */
 void sc_tx_destroy(sc_modem_tx *tx);
 
@@ -96,6 +99,9 @@ int sc_tx_process(sc_modem_tx *tx, int16_t out[], const float symbols_in[]);
 
 /* Create RX modem instance. Returns NULL on allocation failure. */
 sc_modem_rx *sc_rx_create(void);
+
+/* Create RX modem with custom centre frequency (Hz). */
+sc_modem_rx *sc_rx_create_fcentre(float fcentre);
 
 /* Destroy RX modem instance. */
 void sc_rx_destroy(sc_modem_rx *rx);
