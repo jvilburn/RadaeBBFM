@@ -1,6 +1,8 @@
-# Experimental version of FreeDV RADE without python
+# Experimental version of FreeDV RADE without python with BBFM
 
-This repo from https://github.com/peterbmarks/radae_nopy - thanks Peter for this fine innovation
+This repo from from David Rowe https://github.com/drowe67/radae_nopy
+
+Which was from https://github.com/peterbmarks/radae_nopy - thanks Peter for this fine innovation
 
 Based on work from David Rowe https://github.com/drowe67/radae
 
